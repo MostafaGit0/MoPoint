@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Route Analytics Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 18px;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 24px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .preset-manager {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .preset-manager h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: #1b5e20;
+            font-weight: 600;
+        }
+
+        .preset-form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .preset-form input {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .preset-form input:focus {
+            outline: 2px solid #2e7d32;
+        }
+
+        .preset-form button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(67, 160, 71, 0.4);
+        }
+
+        .preset-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(67, 160, 71, 0.5);
+        }
+
+        .preset-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .preset-tag {
+            padding: 8px 16px;
+            background: white;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .preset-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .preset-tag .delete {
+            color: #f56565;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .stops-section h2 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .stop-input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .stop-label {
+            font-weight: 600;
+            min-width: 70px;
+            color: #1e3c72;
+            font-size: 15px;
+        }
+
+        .stop-input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-size: 15px;
+            background: #f7fafc;
+            transition: all 0.2s;
+            width: 100%;
+        }
+
+        .autocomplete-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .stop-input:focus {
+            outline: none;
+            border-color: #2a5298;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        .preset-btn {
+            padding: 10px 16px;
+            background: #edf2f7;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: #e2e8f0;
+            transform: scale(1.05);
+        }
+
+        .remove-btn {
+            padding: 10px 16px;
+            background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .remove-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .add-stop-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+        }
+
+        .add-stop-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(72, 187, 120, 0.5);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ffffff 0%, #d97706 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.6);
+        }
+
+        .map-container {
+            width: 100%;
+            height: 350px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            margin-bottom: 24px;
+            display: none;
+            border: 3px solid #e2e8f0;
+        }
+
+        .map-container.visible {
+            display: block;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .analytics-header {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: #2d3748;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            transition: transform 0.2s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 42px;
+            font-weight: 800;
+            color: #2d3748;
+            line-height: 1;
+        }
+
+        .metric-unit {
+            font-size: 20px;
+            color: #a0aec0;
+            margin-left: 6px;
+            font-weight: 600;
+        }
+
+        .eta-value {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .toggle-details-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+        }
+
+        .toggle-details-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(66, 153, 225, 0.5);
+        }
+
+        .side-panel {
+            position: fixed;
+            right: -480px;
+            top: 0;
+            width: 480px;
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(247,250,252,0.98) 100%);
+            backdrop-filter: blur(20px);
+            box-shadow: -8px 0 32px rgba(0,0,0,0.15);
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .side-panel.open {
+            right: 0;
+        }
+
+        .side-panel-header {
+            padding: 32px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #c1ffc9 0%, #2a9849 100%);
+            color: white;
+        }
+
+        .side-panel-title {
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .close-panel-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            font-size: 32px;
+            cursor: pointer;
+            color: white;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .close-panel-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .side-panel-content {
+            padding: 32px;
+        }
+
+        .segment-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+
+        .segment-card:hover {
+            border-color: #2a5298;
+            transform: translateX(-4px);
+            box-shadow: 0 4px 16px rgba(30, 60, 114, 0.2);
+        }
+
+        .segment-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1e3c72;
+        }
+
+        .segment-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 15px;
+            padding: 8px 0;
+        }
+
+        .segment-detail-label {
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .segment-detail-value {
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-top: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #1e3c72;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .side-panel {
+                width: 90%;
+                right: -90%;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Route Analytics</h1>
+            <p class="subtitle">Measure and analyze your multi-stop driving routes with live ETA tracking</p>
+        </div>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="card">
+                    <div class="preset-manager">
+                        <h3>📍 Location Presets</h3>
+                        <div class="preset-form">
+                            <input type="text" id="presetName" placeholder="Name (e.g., Home)">
+                            <div class="autocomplete-wrapper" style="flex: 1;">
+                                <input type="text" id="presetAddress" placeholder="Address" style="width: 100%; padding: 12px 16px; border: none; border-radius: 10px; font-size: 14px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                            </div>
+                            <button onclick="savePreset()">Save</button>
+                        </div>
+                        <div class="preset-list" id="presetList"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="stops-section">
+                        <h2>🗺️ Route Stops</h2>
+                        <div id="stopsContainer">
+                            <div class="stop-input-group">
+                                <span class="stop-label">Point A</span>
+                                <div class="autocomplete-wrapper">
+                                    <input type="text" class="stop-input" placeholder="Enter starting address" data-index="0">
+                                </div>
+                                <button class="preset-btn" onclick="openPresetSelector(0)">📍</button>
+                            </div>
+                            <div class="stop-input-group">
+                                <span class="stop-label">Point B</span>
+                                <div class="autocomplete-wrapper">
+                                    <input type="text" class="stop-input" placeholder="Enter destination" data-index="1">
+                                </div>
+                                <button class="preset-btn" onclick="openPresetSelector(1)">📍</button>
+                            </div>
+                        </div>
+                        <button class="add-stop-btn" onclick="addStop()">+ Add Stop</button>
+                    </div>
+                </div>
+
+                <button class="calculate-btn" onclick="calculateRoute()">Calculate Route</button>
+                <div id="errorContainer"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="analytics-header">📊 Route Analytics</h2>
+                
+                <div class="map-container" id="mapContainer">
+                    <div id="map"></div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Total Distance</div>
+                    <div class="metric-value" id="totalDistance">--<span class="metric-unit">mi</span></div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Total Drive Time</div>
+                    <div class="metric-value" id="totalTime">--<span class="metric-unit">min</span></div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-label">Live ETA</div>
+                    <div class="metric-value eta-value" id="liveETA">--:--</div>
+                </div>
+
+                <button class="toggle-details-btn" onclick="toggleSidePanel()">View Segment Details →</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="side-panel" id="sidePanel">
+        <div class="side-panel-header">
+            <h2 class="side-panel-title">Segment Breakdown</h2>
+            <button class="close-panel-btn" onclick="toggleSidePanel()">×</button>
+        </div>
+        <div class="side-panel-content" id="segmentDetails"></div>
+    </div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUcwfhkYiAePtxo_QY_Eb2YqCmPD0VNsY&libraries=places"></script>
+    <script>
+        let stops = 2;
+        let routeData = null;
+        let totalDurationMinutes = 0;
+        let etaUpdateInterval = null;
+        let presets = JSON.parse(localStorage.getItem('routePresets') || '{}');
+        let map = null;
+        let directionsRenderer = null;
+
+        function initAutocomplete(input) {
+            const autocomplete = new google.maps.places.Autocomplete(input, {
+                types: ['geocode', 'establishment'],
+                componentRestrictions: { country: 'us' }
+            });
+
+            autocomplete.addListener('place_changed', function() {
+                const place = autocomplete.getPlace();
+                if (place.formatted_address) {
+                    input.value = place.formatted_address;
+                }
+            });
+
+            // Store the autocomplete instance on the input element
+            input.autocompleteInstance = autocomplete;
+
+            // Listen for typing to detect preset names
+            input.addEventListener('input', function() {
+                const typedValue = input.value.trim();
+                
+                // Check if typed value matches any preset name exactly
+                if (presets[typedValue]) {
+                    // Disable autocomplete by unbinding from DOM
+                    autocomplete.unbindAll();
+                }
+            });
+        }
+
+        function initAllAutocomplete() {
+            const inputs = document.querySelectorAll('.stop-input');
+            inputs.forEach(input => initAutocomplete(input));
+            
+            // Add autocomplete to preset address input
+            const presetAddressInput = document.getElementById('presetAddress');
+            if (presetAddressInput) {
+                initAutocomplete(presetAddressInput);
+            }
+        }
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                center: { lat: 40.7128, lng: -74.0060 },
+                styles: [
+                    {
+                        featureType: 'all',
+                        elementType: 'geometry',
+                        stylers: [{ color: '#f5f5f5' }]
+                    },
+                    {
+                        featureType: 'water',
+                        elementType: 'geometry',
+                        stylers: [{ color: '#b3d9ff' }]
+                    },
+                    {
+                        featureType: 'road',
+                        elementType: 'geometry',
+                        stylers: [{ color: '#ffffff' }]
+                    },
+                    {
+                        featureType: 'road',
+                        elementType: 'geometry.stroke',
+                        stylers: [{ color: '#d9d9d9' }]
+                    }
+                ]
+            });
+
+            directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+                suppressMarkers: false,
+                polylineOptions: {
+                    strokeColor: '#1e3c72',
+                    strokeWeight: 6,
+                    strokeOpacity: 0.8
+                }
+            });
+        }
+
+        window.addEventListener('load', function() {
+            initAllAutocomplete();
+            initMap();
+        });
+
+        function renderPresets() {
+            const list = document.getElementById('presetList');
+            list.innerHTML = '';
+            
+            Object.keys(presets).forEach(name => {
+                const tag = document.createElement('div');
+                tag.className = 'preset-tag';
+                tag.innerHTML = `${name} <span class="delete" onclick="deletePreset('${name}')">×</span>`;
+                list.appendChild(tag);
+            });
+        }
+
+        function savePreset() {
+            const name = document.getElementById('presetName').value.trim();
+            const address = document.getElementById('presetAddress').value.trim();
+            
+            if (name && address) {
+                presets[name] = address;
+                localStorage.setItem('routePresets', JSON.stringify(presets));
+                document.getElementById('presetName').value = '';
+                document.getElementById('presetAddress').value = '';
+                renderPresets();
+            }
+        }
+
+        function deletePreset(name) {
+            delete presets[name];
+            localStorage.setItem('routePresets', JSON.stringify(presets));
+            renderPresets();
+        }
+
+        function openPresetSelector(index) {
+            const presetNames = Object.keys(presets);
+            if (presetNames.length === 0) {
+                alert('No presets saved. Add presets above first.');
+                return;
+            }
+            
+            const selected = prompt('Enter preset name:\n' + presetNames.join(', '));
+            if (selected && presets[selected]) {
+                const inputs = document.querySelectorAll('.stop-input');
+                inputs[index].value = presets[selected];
+            }
+        }
+
+        function addStop() {
+            stops++;
+            const container = document.getElementById('stopsContainer');
+            const label = String.fromCharCode(65 + stops - 1);
+            
+            const group = document.createElement('div');
+            group.className = 'stop-input-group';
+            group.innerHTML = `
+                <span class="stop-label">Point ${label}</span>
+                <div class="autocomplete-wrapper">
+                    <input type="text" class="stop-input" placeholder="Enter address" data-index="${stops - 1}">
+                </div>
+                <button class="preset-btn" onclick="openPresetSelector(${stops - 1})">📍</button>
+                <button class="remove-btn" onclick="removeStop(this)">Remove</button>
+            `;
+            container.appendChild(group);
+            initAutocomplete(group.querySelector('.stop-input'));
+        }
+
+        function removeStop(btn) {
+            if (stops <= 2) return;
+            btn.parentElement.remove();
+            stops--;
+            updateStopLabels();
+        }
+
+        function updateStopLabels() {
+            const groups = document.querySelectorAll('.stop-input-group');
+            groups.forEach((group, index) => {
+                const label = String.fromCharCode(65 + index);
+                group.querySelector('.stop-label').textContent = `Point ${label}`;
+                group.querySelector('.stop-input').setAttribute('data-index', index);
+            });
+        }
+
+        function showError(message) {
+            const container = document.getElementById('errorContainer');
+            container.innerHTML = `<div class="error-message">${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        function calculateRoute() {
+            const inputs = document.querySelectorAll('.stop-input');
+            const rawAddresses = Array.from(inputs).map(input => input.value.trim()).filter(v => v);
+            
+            if (rawAddresses.length < 2) {
+                showError('Please enter at least 2 addresses');
+                return;
+            }
+
+            // Resolve presets to actual addresses
+            const addresses = rawAddresses.map(addr => {
+                // Check if the input is a preset name
+                if (presets[addr]) {
+                    return presets[addr];
+                }
+                return addr;
+            });
+
+            document.getElementById('errorContainer').innerHTML = '<div class="loading">🔄 Calculating route...</div>';
+
+            const directionsService = new google.maps.DirectionsService();
+            const origin = addresses[0];
+            const destination = addresses[addresses.length - 1];
+            const waypoints = addresses.slice(1, -1).map(addr => ({
+                location: addr,
+                stopover: true
+            }));
+
+            directionsService.route({
+                origin: origin,
+                destination: destination,
+                waypoints: waypoints,
+                travelMode: 'DRIVING'
+            }, (response, status) => {
+                if (status === 'OK') {
+                    processRouteData(response, rawAddresses);
+                    displayRouteOnMap(response);
+                    document.getElementById('errorContainer').innerHTML = '';
+                } else {
+                    showError('Route calculation failed. Please check addresses.');
+                }
+            });
+        }
+
+        function processRouteData(response, rawAddresses) {
+            const route = response.routes[0];
+            let totalDistanceMiles = 0;
+            let totalDurationMin = 0;
+            const segments = [];
+
+            route.legs.forEach((leg, index) => {
+                const distanceMiles = (leg.distance.value / 1609.34).toFixed(1);
+                const durationMin = Math.round(leg.duration.value / 60);
+                
+                totalDistanceMiles += parseFloat(distanceMiles);
+                totalDurationMin += durationMin;
+
+                const fromInput = rawAddresses[index];
+                const toInput = rawAddresses[index + 1];
+                
+                // Extract street names from Google's resolved addresses
+                const fromStreet = leg.start_address.split(',')[0].trim();
+                const toStreet = leg.end_address.split(',')[0].trim();
+                
+                // Check if inputs are preset names, otherwise use street names
+                const fromLabel = presets[fromInput] ? fromInput : fromStreet;
+                const toLabel = presets[toInput] ? toInput : toStreet;
+
+                segments.push({
+                    from: String.fromCharCode(65 + index),
+                    to: String.fromCharCode(65 + index + 1),
+                    fromLabel: fromLabel,
+                    toLabel: toLabel,
+                    distance: distanceMiles,
+                    duration: durationMin
+                });
+            });
+
+            routeData = { segments, totalDistanceMiles, totalDurationMin };
+            totalDurationMinutes = totalDurationMin;
+
+            updateAnalytics();
+            startETAUpdates();
+        }
+
+        function displayRouteOnMap(response) {
+            directionsRenderer.setDirections(response);
+            document.getElementById('mapContainer').classList.add('visible');
+            
+            const bounds = new google.maps.LatLngBounds();
+            response.routes[0].legs.forEach(leg => {
+                bounds.extend(leg.start_location);
+                bounds.extend(leg.end_location);
+            });
+            map.fitBounds(bounds);
+        }
+
+        function updateAnalytics() {
+            document.getElementById('totalDistance').innerHTML = 
+                `${routeData.totalDistanceMiles.toFixed(1)}<span class="metric-unit">mi</span>`;
+            document.getElementById('totalTime').innerHTML = 
+                `${routeData.totalDurationMin}<span class="metric-unit">min</span>`;
+            updateLiveETA();
+            renderSegments();
+        }
+
+        function updateLiveETA() {
+            const now = new Date();
+            const etaTime = new Date(now.getTime() + totalDurationMinutes * 60000);
+            const hours = etaTime.getHours();
+            const minutes = etaTime.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            const displayMinutes = minutes.toString().padStart(2, '0');
+            
+            document.getElementById('liveETA').textContent = 
+                `${displayHours}:${displayMinutes} ${ampm}`;
+        }
+
+        function startETAUpdates() {
+            if (etaUpdateInterval) clearInterval(etaUpdateInterval);
+            etaUpdateInterval = setInterval(updateLiveETA, 1000);
+        }
+
+        function renderSegments() {
+            const container = document.getElementById('segmentDetails');
+            container.innerHTML = '';
+            
+            let cumulativeTime = 0;
+            routeData.segments.forEach(segment => {
+                cumulativeTime += segment.duration;
+                const arrivalTime = new Date(new Date().getTime() + cumulativeTime * 60000);
+                const hours = arrivalTime.getHours();
+                const minutes = arrivalTime.getMinutes();
+                const ampm = hours >= 12 ? 'PM' : 'AM';
+                const displayHours = hours % 12 || 12;
+                const displayMinutes = minutes.toString().padStart(2, '0');
+                
+                const card = document.createElement('div');
+                card.className = 'segment-card';
+                card.innerHTML = `
+                    <div class="segment-header">${segment.fromLabel} → ${segment.toLabel}</div>
+                    <div class="segment-detail">
+                        <span class="segment-detail-label">Distance</span>
+                        <span class="segment-detail-value">${segment.distance} miles</span>
+                    </div>
+                    <div class="segment-detail">
+                        <span class="segment-detail-label">Duration</span>
+                        <span class="segment-detail-value">${segment.duration} minutes</span>
+                    </div>
+                    <div class="segment-detail">
+                        <span class="segment-detail-label">Arrival at ${segment.toLabel}</span>
+                        <span class="segment-detail-value">${displayHours}:${displayMinutes} ${ampm}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleSidePanel() {
+            document.getElementById('sidePanel').classList.toggle('open');
+        }
+
+        renderPresets();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUcwfhkYiAePtxo_QY_Eb2YqCmPD0VNsY&libraries=places"></script>
