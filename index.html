@@ -449,6 +449,43 @@
             box-shadow: 0 6px 16px rgba(66, 153, 225, 0.5);
         }
 
+        .send-to-maps-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            display: none;
+        }
+
+        .send-to-maps-btn.visible {
+            display: block;
+        }
+
+        .send-to-maps-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.5);
+        }
+
+        .refresh-indicator {
+            text-align: center;
+            font-size: 12px;
+            color: #718096;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .refresh-indicator.visible {
+            display: block;
+        }
+
         .side-panel {
             position: fixed;
             right: -480px;
@@ -672,6 +709,8 @@
                 </div>
 
                 <button class="toggle-details-btn" onclick="toggleSidePanel()">View Segment Details →</button>
+                <button class="send-to-maps-btn" id="sendToMapsBtn" onclick="sendToGoogleMaps()">📍 Send to Google Maps</button>
+                <div class="refresh-indicator" id="refreshIndicator">Checking traffic...</div>
             </div>
         </div>
     </div>
@@ -703,6 +742,8 @@
         let directionsRenderer = null;
         let draggedElement = null;
         let selectedPresetForFill = null;
+        let routeRefreshInterval = null;
+        let currentRouteRequest = null;
 
         function initAutocomplete(input) {
             const autocomplete = new google.maps.places.Autocomplete(input, {
@@ -961,6 +1002,12 @@
                 return addr;
             });
 
+            // Store the route request for auto-refresh
+            currentRouteRequest = {
+                rawAddresses: rawAddresses,
+                addresses: addresses
+            };
+
             document.getElementById('errorContainer').innerHTML = '<div class="loading">🔄 Calculating route...</div>';
 
             const directionsService = new google.maps.DirectionsService();
@@ -981,10 +1028,83 @@
                     processRouteData(response, rawAddresses);
                     displayRouteOnMap(response);
                     document.getElementById('errorContainer').innerHTML = '';
+                    
+                    // Show "Send to Maps" button
+                    document.getElementById('sendToMapsBtn').classList.add('visible');
+                    
+                    // Start auto-refresh every 2 minutes
+                    startRouteAutoRefresh();
                 } else {
                     showError('Route calculation failed. Please check addresses.');
                 }
             });
+        }
+
+        function startRouteAutoRefresh() {
+            // Clear any existing interval
+            if (routeRefreshInterval) {
+                clearInterval(routeRefreshInterval);
+            }
+            
+            // Refresh every 5 minutes (300000 milliseconds)
+            routeRefreshInterval = setInterval(() => {
+                refreshRouteData();
+            }, 300000);
+        }
+
+        function refreshRouteData() {
+            if (!currentRouteRequest) return;
+            
+            const indicator = document.getElementById('refreshIndicator');
+            indicator.classList.add('visible');
+            
+            const directionsService = new google.maps.DirectionsService();
+            const addresses = currentRouteRequest.addresses;
+            const origin = addresses[0];
+            const destination = addresses[addresses.length - 1];
+            const waypoints = addresses.slice(1, -1).map(addr => ({
+                location: addr,
+                stopover: true
+            }));
+
+            directionsService.route({
+                origin: origin,
+                destination: destination,
+                waypoints: waypoints,
+                travelMode: 'DRIVING'
+            }, (response, status) => {
+                if (status === 'OK') {
+                    processRouteData(response, currentRouteRequest.rawAddresses);
+                    displayRouteOnMap(response);
+                }
+                
+                // Hide indicator after 2 seconds
+                setTimeout(() => {
+                    indicator.classList.remove('visible');
+                }, 2000);
+            });
+        }
+
+        function sendToGoogleMaps() {
+            if (!currentRouteRequest) return;
+            
+            const addresses = currentRouteRequest.addresses;
+            
+            // Build Google Maps URL
+            let mapsUrl = 'https://www.google.com/maps/dir/?api=1';
+            mapsUrl += '&origin=' + encodeURIComponent(addresses[0]);
+            mapsUrl += '&destination=' + encodeURIComponent(addresses[addresses.length - 1]);
+            
+            // Add waypoints if there are any
+            if (addresses.length > 2) {
+                const waypoints = addresses.slice(1, -1).join('|');
+                mapsUrl += '&waypoints=' + encodeURIComponent(waypoints);
+            }
+            
+            mapsUrl += '&travelmode=driving';
+            
+            // Open in new tab/window (or Google Maps app on mobile)
+            window.open(mapsUrl, '_blank');
         }
 
         function processRouteData(response, rawAddresses) {
