@@ -11,9 +11,26 @@
             box-sizing: border-box;
         }
 
+        :root{
+            --bg1:#224ea7;
+            --bg2:#111827;
+
+            --primary:#3b82f6;
+            --primaryDark:#1d4ed8;
+            --primarySoft:#dbeafe;
+
+
+            --surface:rgba(255,255,255,0.96);
+            --surface2:#f8fafc;
+
+            --text:#0f172a;
+            --muted:#64748b;
+            --border:#e2e8f0;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
             min-height: 100vh;
             padding: 40px 20px;
         }
@@ -49,7 +66,7 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--surface);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 32px;
@@ -63,7 +80,7 @@
         }
 
         .preset-manager {
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            background: linear-gradient(135deg, var(--primarySoft) 0%, #ffffff 100%);
             padding: 24px;
             border-radius: 16px;
         }
@@ -71,7 +88,7 @@
         .preset-manager h3 {
             font-size: 18px;
             margin-bottom: 16px;
-            color: #1b5e20;
+            color: var(--primaryDark);
             font-weight: 600;
         }
 
@@ -92,12 +109,12 @@
         }
 
         .preset-form input:focus {
-            outline: 2px solid #2e7d32;
+            outline: 2px solid var(--primary);
         }
 
         .preset-form button {
             padding: 12px 24px;
-            background: linear-gradient(135deg, #43a047 0%, #2e7d32 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primaryDark) 100%);
             color: white;
             border: none;
             border-radius: 10px;
@@ -105,7 +122,7 @@
             font-size: 14px;
             font-weight: 600;
             transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 12px rgba(67, 160, 71, 0.4);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
         }
 
         .preset-form button:hover {
@@ -138,7 +155,7 @@
         .preset-tag:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-            background: #f0f9ff;
+            background: var(--primarySoft);
         }
 
         .preset-tag .preset-name {
@@ -199,7 +216,7 @@
 
         .point-option:hover {
             background: #edf2f7;
-            border-color: #2a5298;
+            border-color: var(--primary);
             transform: translateX(4px);
         }
 
@@ -256,13 +273,13 @@
         }
 
         .stop-input-group.drag-over {
-            border-top: 3px solid #2a5298;
+            border-top: 3px solid var(--primary);
         }
 
         .stop-label {
             font-weight: 600;
             min-width: 70px;
-            color: #1e3c72;
+            color: var(--primaryDark);
             font-size: 15px;
         }
 
@@ -284,9 +301,9 @@
 
         .stop-input:focus {
             outline: none;
-            border-color: #2a5298;
+            border-color: var(--primary);
             background: white;
-            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.18);
         }
 
         .preset-btn {
@@ -324,7 +341,7 @@
         .add-stop-btn {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primaryDark) 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -333,7 +350,7 @@
             cursor: pointer;
             margin-top: 8px;
             transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 12px rgba(72, 187, 120, 0.4);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
         }
 
         .add-stop-btn:hover {
@@ -344,7 +361,7 @@
         .calculate-btn {
             width: 100%;
             padding: 18px;
-            background: linear-gradient(135deg, #ffffff 0%, #d97706 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primaryDark) 100%);
             color: white;
             border: none;
             border-radius: 14px;
@@ -352,7 +369,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
         }
 
         .calculate-btn:hover {
@@ -423,7 +440,7 @@
         }
 
         .eta-value {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primaryDark) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -432,7 +449,7 @@
         .toggle-details-btn {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primaryDark) 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -441,7 +458,7 @@
             cursor: pointer;
             margin-top: 20px;
             transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.4);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
         }
 
         .toggle-details-btn:hover {
@@ -452,7 +469,7 @@
         .send-to-maps-btn {
             width: 100%;
             padding: 16px;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primaryDark) 100%);
             color: white;
             border: none;
             border-radius: 12px;
@@ -461,7 +478,7 @@
             cursor: pointer;
             margin-top: 12px;
             transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
             display: none;
         }
 
@@ -510,7 +527,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(135deg, #c1ffc9 0%, #2a9849 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primaryDark) 100%);
             color: white;
         }
 
@@ -554,7 +571,7 @@
         }
 
         .segment-card:hover {
-            border-color: #2a5298;
+            border-color: var(--primary);
             transform: translateX(-4px);
             box-shadow: 0 4px 16px rgba(30, 60, 114, 0.2);
         }
@@ -563,7 +580,7 @@
             font-size: 18px;
             font-weight: 700;
             margin-bottom: 16px;
-            color: #1e3c72;
+            color: var(--primaryDark);
         }
 
         .segment-detail {
@@ -598,7 +615,7 @@
         .loading {
             text-align: center;
             padding: 20px;
-            color: #1e3c72;
+            color: var(--primaryDark);
             font-weight: 600;
             font-size: 15px;
         }
@@ -627,12 +644,12 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primaryDark) 100%);
             border-radius: 10px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            background: linear-gradient(135deg, var(--primaryDark) 0%, var(--primary) 100%);
         }
     </style>
 </head>
@@ -758,16 +775,12 @@
                 }
             });
 
-            // Store the autocomplete instance on the input element
             input.autocompleteInstance = autocomplete;
 
-            // Listen for typing to detect preset names
             input.addEventListener('input', function() {
                 const typedValue = input.value.trim();
                 
-                // Check if typed value matches any preset name exactly
                 if (presets[typedValue]) {
-                    // Disable autocomplete by unbinding from DOM
                     autocomplete.unbindAll();
                 }
             });
@@ -777,7 +790,6 @@
             const inputs = document.querySelectorAll('.stop-input');
             inputs.forEach(input => initAutocomplete(input));
             
-            // Add autocomplete to preset address input
             const presetAddressInput = document.getElementById('presetAddress');
             if (presetAddressInput) {
                 initAutocomplete(presetAddressInput);
@@ -816,7 +828,7 @@
                 map: map,
                 suppressMarkers: false,
                 polylineOptions: {
-                    strokeColor: '#1e3c72',
+                    strokeColor: '#4f46e5',
                     strokeWeight: 6,
                     strokeOpacity: 0.8
                 }
@@ -897,7 +909,6 @@
         }
 
         function openPresetSelector(index) {
-            // This function is no longer needed but kept for compatibility
         }
 
         function initDragAndDrop() {
@@ -993,16 +1004,13 @@
                 return;
             }
 
-            // Resolve presets to actual addresses
             const addresses = rawAddresses.map(addr => {
-                // Check if the input is a preset name
                 if (presets[addr]) {
                     return presets[addr];
                 }
                 return addr;
             });
 
-            // Store the route request for auto-refresh
             currentRouteRequest = {
                 rawAddresses: rawAddresses,
                 addresses: addresses
@@ -1029,10 +1037,8 @@
                     displayRouteOnMap(response);
                     document.getElementById('errorContainer').innerHTML = '';
                     
-                    // Show "Send to Maps" button
                     document.getElementById('sendToMapsBtn').classList.add('visible');
                     
-                    // Start auto-refresh every 2 minutes
                     startRouteAutoRefresh();
                 } else {
                     showError('Route calculation failed. Please check addresses.');
@@ -1041,12 +1047,10 @@
         }
 
         function startRouteAutoRefresh() {
-            // Clear any existing interval
             if (routeRefreshInterval) {
                 clearInterval(routeRefreshInterval);
             }
             
-            // Refresh every 5 minutes (300000 milliseconds)
             routeRefreshInterval = setInterval(() => {
                 refreshRouteData();
             }, 300000);
@@ -1078,7 +1082,6 @@
                     displayRouteOnMap(response);
                 }
                 
-                // Hide indicator after 2 seconds
                 setTimeout(() => {
                     indicator.classList.remove('visible');
                 }, 2000);
@@ -1090,12 +1093,10 @@
             
             const addresses = currentRouteRequest.addresses;
             
-            // Build Google Maps URL
             let mapsUrl = 'https://www.google.com/maps/dir/?api=1';
             mapsUrl += '&origin=' + encodeURIComponent(addresses[0]);
             mapsUrl += '&destination=' + encodeURIComponent(addresses[addresses.length - 1]);
             
-            // Add waypoints if there are any
             if (addresses.length > 2) {
                 const waypoints = addresses.slice(1, -1).join('|');
                 mapsUrl += '&waypoints=' + encodeURIComponent(waypoints);
@@ -1103,7 +1104,6 @@
             
             mapsUrl += '&travelmode=driving';
             
-            // Open in new tab/window (or Google Maps app on mobile)
             window.open(mapsUrl, '_blank');
         }
 
@@ -1123,11 +1123,9 @@
                 const fromInput = rawAddresses[index];
                 const toInput = rawAddresses[index + 1];
                 
-                // Extract street names from Google's resolved addresses
                 const fromStreet = leg.start_address.split(',')[0].trim();
                 const toStreet = leg.end_address.split(',')[0].trim();
                 
-                // Check if inputs are preset names, otherwise use street names
                 const fromLabel = presets[fromInput] ? fromInput : fromStreet;
                 const toLabel = presets[toInput] ? toInput : toStreet;
 
